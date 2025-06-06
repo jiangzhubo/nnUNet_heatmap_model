@@ -1264,7 +1264,7 @@ class nnUNetTrainer(object):
                                                                allowed_num_queued=2)
 
                 self.print_to_log_file(f"predicting {k}")
-                data, _, seg_prev, properties = dataset_val.load_case(k)
+                data, _, seg_prev, _, properties = dataset_val.load_case(k)
 
                 # we do [:] to convert blosc2 to numpy
                 data = data[:]
@@ -1309,7 +1309,7 @@ class nnUNetTrainer(object):
                         try:
                             # we do this so that we can use load_case and do not have to hard code how loading training cases is implemented
                             tmp = dataset_class(expected_preprocessed_folder, [k])
-                            d, _, _, _ = tmp.load_case(k)
+                            d, _, _, _, _ = tmp.load_case(k)
                         except FileNotFoundError:
                             self.print_to_log_file(
                                 f"Predicting next stage {n} failed for case {k} because the preprocessed file is missing! "
