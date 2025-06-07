@@ -25,8 +25,10 @@ def make_case(idx: int, out_dir: str, shape=(32, 32)):
     }
     properties = {"class_locations": class_locations}
 
-    np.save(base + ".npy", img[None])
-    np.save(base + "_seg.npy", seg[None])
+    # the nnUNetDataset class expects .npz files for inferring case identifiers
+    # We therefore store image and segmentation in a compressed npz archive.
+    np.savez_compressed(base + ".npz", data=img[None], seg=seg[None])
+    # heatmaps are optional and loaded separately
     np.save(base + "_heatmap.npy", heatmap)
     with open(base + ".pkl", "wb") as f:
         pickle.dump(properties, f)

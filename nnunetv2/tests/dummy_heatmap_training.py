@@ -13,6 +13,8 @@ class TinyNet(nn.Module):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 8, 3, padding=1)
         self.conv2 = nn.Conv2d(8, 2, 3, padding=1)
+        # required by SegmentationHeatmapWrapper
+        self.num_classes = 2
 
     def forward(self, x):
         x = F.relu(self.conv1(x))
@@ -38,9 +40,9 @@ def train_one_epoch(net, loader, device):
     optim = torch.optim.Adam(net.parameters(), 1e-3)
     for _ in range(5):
         batch = next(loader)
-        data = batch["data"].to(device)
-        target = batch["target"].squeeze(1).long().to(device)
-        heat = batch["heatmap"].to(device)
+        data = torch.as_tensor(batch["data"]).to(device)
+        target = torch.as_tensor(batch["target"]).squeeze(1).long().to(device)
+        heat = torch.as_tensor(batch["heatmap"]).to(device)
         out = net(data)
         seg_out = out[:, :2]
         heat_out = out[:, 2].unsqueeze(1)
@@ -55,9 +57,9 @@ def validate(net, loader, device):
     net.eval()
     with torch.no_grad():
         batch = next(loader)
-        data = batch["data"].to(device)
-        target = batch["target"].squeeze(1).long().to(device)
-        heat = batch["heatmap"].to(device)
+        data = torch.as_tensor(batch["data"]).to(device)
+        target = torch.as_tensor(batch["target"]).squeeze(1).long().to(device)
+        heat = torch.as_tensor(batch["heatmap"]).to(device)
         out = net(data)
         seg_out = out[:, :2]
         heat_out = out[:, 2].unsqueeze(1)
