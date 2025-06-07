@@ -46,7 +46,7 @@ def train_one_epoch(net, loader, device):
         out = net(data)
         seg_out = out[:, :2]
         heat_out = out[:, 2].unsqueeze(1)
-        loss = F.cross_entropy(seg_out, target) + F.mse_loss(heat_out, heat.unsqueeze(1))
+        loss = F.cross_entropy(seg_out, target) + F.mse_loss(heat_out, heat)
         optim.zero_grad()
         loss.backward()
         optim.step()
@@ -63,7 +63,7 @@ def validate(net, loader, device):
         out = net(data)
         seg_out = out[:, :2]
         heat_out = out[:, 2].unsqueeze(1)
-        loss = F.cross_entropy(seg_out, target) + F.mse_loss(heat_out, heat.unsqueeze(1))
+        loss = F.cross_entropy(seg_out, target) + F.mse_loss(heat_out, heat)
     return loss.item()
 
 
